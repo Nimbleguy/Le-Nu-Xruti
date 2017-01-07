@@ -1,0 +1,85 @@
+name: Le Nu Xruti
+version: Close Back Unrounded Vowel
+author: Nomble
+main: nomble.java.LeNuXruti.Main
+description: The Return
+commands:
+  nick:
+    description: Set your nickname.
+    permission: lenuxruti.nick.nick.self
+    permission-message: This isn't the command you're looking for.
+    usage: /nick NickName. NickName can have spaces!
+  prefix:
+    description: Set your prefix.
+    permission: lenuxruti.nick.prefix.self
+    permission-message: This isn't the command you're looking for.
+    usage: /prefix Prefix. Prefix can have spaces!
+  suffix:
+    description: Set your suffix.
+    permission: lenuxruti.nick.suffix.self
+    permission-message: This isn't the command you're looking for.
+    usage: /suffix Suffix. Suffix can have spaces!
+  unick:
+    description: Set other's nicknames.
+    permission: lenuxruti.nick.nick.else
+    permission-message: This isn't the command you're looking for.
+    usage: /unick User NickName. NickName can have spaces!
+  uprefix:
+    description: Set other's prefixes.
+    permission: lenuxruti.nick.prefix.else
+    permission-message: This isn't the command you're looking for.
+    usage: /uprefix User Prefix. Prefix can have spaces!
+  usuffix:
+    description: Set other's suffixes.
+    permission: lenuxruti.nick.suffix.else
+    permission-message: This isn't the command you're looking for.
+    usage: /usuffix User Suffix. Suffix can have spaces!
+permissions:
+  lenuxruti.*:
+    description: All the permissions.
+    default: op
+    children:
+      lenuxruti.nick.*: true
+  lenuxruti.nick.*:
+    description: Nicknames, nicknames everywhere.
+    default: op
+    children:
+     lenuxruti.nick.nick.*: true
+     lenuxruti.nick.prefix.*: true
+     lenuxruti.nick.suffix.*: true
+  lenuxruti.nick.nick.*:
+    description: Force name changes.
+    default: op
+    children:
+     lenuxruti.nick.nick.self: true
+     lenuxruti.nick.nick.else: true
+  lenuxruti.nick.nick.self:
+    description: Change your own nickname.
+    default: true
+  lenuxruti.nick.nick.else:
+    description: Change other's nicknames.
+    default: op
+  lenuxruti.nick.prefix.*:
+    description: Force prefix changes.
+    default: op
+    children:
+     lenuxruti.nick.prefix.self: true
+     lenuxruti.nick.prefix.else: true
+  lenuxruti.nick.prefix.self:
+    description: Change your own prefix.
+    default: true
+  lenuxruti.nick.prefix.else:
+    description: Change	other's prefixes.
+    default: op
+  lenuxruti.nick.suffix.*:
+    description: Force suffix changes.
+    default: op
+    children:
+     lenuxruti.nick.suffix.self: true
+     lenuxruti.nick.suffix.else: true
+  lenuxruti.nick.suffix.self:
+    description: Change your own suffix.
+    default: true
+  lenuxruti.nick.suffix.else:
+    description: Change	other's suffixes.
+    default: op
