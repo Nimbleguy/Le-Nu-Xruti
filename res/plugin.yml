@@ -1,4 +1,4 @@
-name: Le Nu Xruti
+name: LeNuXruti
 version: Close Back Unrounded Vowel
 author: Nomble
 main: nomble.java.LeNuXruti.Main
@@ -8,32 +8,32 @@ commands:
     description: Set your nickname.
     permission: lenuxruti.nick.nick.self
     permission-message: This isn't the command you're looking for.
-    usage: /nick NickName. NickName can have spaces!
+    usage: /nick [NickName]. NickName can have spaces!
   prefix:
     description: Set your prefix.
     permission: lenuxruti.nick.prefix.self
     permission-message: This isn't the command you're looking for.
-    usage: /prefix Prefix. Prefix can have spaces!
+    usage: /prefix [Prefix]. Prefix can have spaces!
   suffix:
     description: Set your suffix.
     permission: lenuxruti.nick.suffix.self
     permission-message: This isn't the command you're looking for.
-    usage: /suffix Suffix. Suffix can have spaces!
+    usage: /suffix [Suffix]. Suffix can have spaces!
   unick:
     description: Set other's nicknames.
     permission: lenuxruti.nick.nick.else
     permission-message: This isn't the command you're looking for.
-    usage: /unick User NickName. NickName can have spaces!
+    usage: /unick User [NickName]. NickName can have spaces!
   uprefix:
     description: Set other's prefixes.
     permission: lenuxruti.nick.prefix.else
     permission-message: This isn't the command you're looking for.
-    usage: /uprefix User Prefix. Prefix can have spaces!
+    usage: /uprefix User [Prefix]. Prefix can have spaces!
   usuffix:
     description: Set other's suffixes.
     permission: lenuxruti.nick.suffix.else
     permission-message: This isn't the command you're looking for.
-    usage: /usuffix User Suffix. Suffix can have spaces!
+    usage: /usuffix User [Suffix]. Suffix can have spaces!
 permissions:
   lenuxruti.*:
     description: All the permissions.

@@ -51,14 +51,14 @@ $(JAR) : $(ARTIFACTS) $(CFILE) $(MANIFEST)
 	cp $(MANIFEST) $(BINDIR)/manifest
 	truncate -s-1 $(BINDIR)/manifest
 	printf "Class-Path: $(subst $(SPACE),$(SPACE)\n$(SPACE),$(wildcard $(LIBDIR)/*.jar))$(subst $(SPACE),$(SPACE)\n$(SPACE),$(wildcard $(JARDIR)/*.jar))\n" >> $(BINDIR)/manifest
-	rsync -a $(RESDIR) $(BINDIR)
-	jar cmf $(BINDIR)/manifest $(JAR) $(patsubst $(BINDIR)/%,-C $(BINDIR) %,$(CFILE))
+	rsync -a $(RESDIR)/* $(BINDIR)
+	jar cmf $(BINDIR)/manifest $(JAR) $(patsubst $(BINDIR)/%,-C $(BINDIR) %,$(shell find $(BINDIR) -type f -not -name manifest))
 
 $(BINDIR)/%.class : $(SRCDIR)/%.java $(SRCDIR) $(BINDIR) $(ARTIFACTS)
 	javac -d $(BINDIR) -cp ".:$(LIBDIR)/*:$(JARDIR):$(BINDIR):$(SRCDIR)" $(CARG) $<
 
 run : $(JAR)
-	java $(PROP) -jar $(JAR) $(ARGS)
+	cd spigot && java -jar spigot-1.10.2.jar
 
 debug : build
 	java -Xdebug -Xnoagent -Djava.compiler=NONE  -Xrunjdwp:transport=dt_socket,server=y,address=8888,suspend=y $(PROP) $(JAR) $(ARGS)

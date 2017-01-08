@@ -5,16 +5,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 public class Main extends JavaPlugin implements Listener{
-	public HashMap<UUID, String> suffix = new HashMap<UUID, String>();
-	public HashMap<UUID, String> nick = new HashMap<UUID, String>();
-	public HashMap<UUID, String> prefix = new HashMap<UUID, String>();
+
 	@Override
 	public void onEnable(){
 		this.getCommand("prefix").setExecutor(this);
@@ -23,14 +18,17 @@ public class Main extends JavaPlugin implements Listener{
 		this.getCommand("uprefix").setExecutor(this);
 		this.getCommand("unick").setExecutor(this);
 		this.getCommand("usuffix").setExecutor(this);
+		this.getServer().getPluginManager().registerEvents(this, this);
 	}
 
 	@Override
-	public void onDisable(){}
+	public void onDisable(){
+		this.saveConfig();
+	}
 
 	@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent event){
-		setNick(event.getPlayer());
+	public void onPlayerChat(AsyncPlayerChatEvent event){
+		event.setFormat(getNick(event.getPlayer()) + ": %2$s");
 	}
 
 	@Override
@@ -43,20 +41,24 @@ public class Main extends JavaPlugin implements Listener{
 				s.append(args[i]);
 			}
 			String str = s.toString();
+			str = str.replaceAll("[&\\$](?=[\\dabcdefABCDEF])", Character.toString((char)167));
 			Player p = this.getServer().getPlayerExact(args[0]);
 			if(label.equalsIgnoreCase("uprefix")){
-				prefix.put(p.getUniqueId(), str);
+                                this.getConfig().set(p.getUniqueId().toString() + "-prefix", str);
+				p.sendMessage("Prefix set to " + str + Character.toString((char)167) + "f.");
 			}
 			else if(label.equalsIgnoreCase("unick")){
-				nick.put(p.getUniqueId(), str);
+                                this.getConfig().set(p.getUniqueId() + "-nicinacage", str);
+				p.sendMessage("Nickname set to " + str + Character.toString((char)167) + "f.");
 			}
 			else if(label.equalsIgnoreCase("usuffix")){
-				suffix.put(p.getUniqueId(), str);
+                                this.getConfig().set(p.getUniqueId() + "-suffix", str);
+				p.sendMessage("Suffix set to " + str + Character.toString((char)167) + "f.");
 			}
 			else{
 				return false;
 			}
-			setNick(p);
+			this.saveConfig();
 		}
 		else if(sender instanceof Player && args.length > 0){
 			StringBuilder s = new StringBuilder();
@@ -66,20 +68,62 @@ public class Main extends JavaPlugin implements Listener{
 				s.append(args[i]);
 			}
 			String str = s.toString();
+			str = str.replaceAll("[&\\$](?=[\\dabcdefABCDEF])", Character.toString((char)167));
 			Player p = (Player)sender;
 			if(label.equalsIgnoreCase("prefix")){
-				prefix.put(p.getUniqueId(), str);
+				this.getConfig().set(p.getUniqueId().toString() + "-prefix", str);
+				p.sendMessage("Prefix set to " + str + Character.toString((char)167) + "f.");
 			}
 			else if(label.equalsIgnoreCase("nick")){
-				nick.put(p.getUniqueId(), str);
+				this.getConfig().set(p.getUniqueId() + "-nicinacage", str);
+				p.sendMessage("Nickname set to " + str + Character.toString((char)167) + "f.");
 			}
 			else if(label.equalsIgnoreCase("suffix")){
-				suffix.put(p.getUniqueId(), str);
+				this.getConfig().set(p.getUniqueId() + "-suffix", str);
+				p.sendMessage("Suffix set to " + str + Character.toString((char)167) + "f.");
 			}
 			else{
 				return false;
 			}
-			setNick(p);
+			this.saveConfig();
+		}
+		else if(label.startsWith("u") && args.length > 0){
+			Player p = this.getServer().getPlayerExact(args[0]);
+			if(label.equalsIgnoreCase("uprefix")){
+                                this.getConfig().set(p.getUniqueId().toString() + "-prefix", "");
+				p.sendMessage("Prefix reset.");
+			}
+			else if(label.equalsIgnoreCase("unick")){
+                                this.getConfig().set(p.getUniqueId() + "-nicinacage", "");
+				p.sendMessage("Nickname reset.");
+			}
+			else if(label.equalsIgnoreCase("usuffix")){
+                                this.getConfig().set(p.getUniqueId() + "-suffix", "");
+				p.sendMessage("Suffix reset.");
+			}
+			else{
+				return false;
+			}
+			this.saveConfig();
+		}
+		else if(sender instanceof Player){
+			Player p = (Player)sender;
+			if(label.equalsIgnoreCase("prefix")){
+				this.getConfig().set(p.getUniqueId().toString() + "-prefix", "");
+				p.sendMessage("Prefix reset.");
+			}
+			else if(label.equalsIgnoreCase("nick")){
+				this.getConfig().set(p.getUniqueId() + "-nicinacage", "");
+				p.sendMessage("Nickname reset.");
+			}
+			else if(label.equalsIgnoreCase("suffix")){
+				this.getConfig().set(p.getUniqueId() + "-suffix", "");
+				p.sendMessage("Suffix reset.");
+			}
+			else{
+				return false;
+			}
+			this.saveConfig();
 		}
 		else{
 			return false;
@@ -91,13 +135,13 @@ public class Main extends JavaPlugin implements Listener{
 		return v == null ? def : v;
 	}
 
-	private void setNick(Player p){
-		String pref = "[" + getNoNull(prefix.get(p.getUniqueId()), "") + "]";
-		String cage = "(" + getNoNull(nick.get(p.getUniqueId()), "") + ")";
-		if(cage == "()"){
+	private String getNick(Player p){
+		String pref = Character.toString((char)167) + "f[" + this.getConfig().getString(p.getUniqueId().toString() + "-prefix", "") + Character.toString((char)167) + "f]";
+		String cage = "(" + this.getConfig().getString(p.getUniqueId() + "-nicinacage", "") + Character.toString((char)167) + "f)";
+		if(cage.equals("(" + Character.toString((char)167) + "f)")){
 			cage = p.getPlayerListName();
 		}
-		String suff = getNoNull(suffix.get(p.getUniqueId()), "");
-		p.setDisplayName(pref + cage + suff);
+		String suff = this.getConfig().getString(p.getUniqueId().toString() + "-suffix", "") + Character.toString((char)167) + "f";
+		return (pref + " " + cage + " " + suff).trim();
 	}
 }
