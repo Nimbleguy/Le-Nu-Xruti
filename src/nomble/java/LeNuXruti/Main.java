@@ -136,9 +136,9 @@ public class Main extends JavaPlugin implements Listener{
 	}
 
 	private String getNick(Player p){
-		String pref = Character.toString((char)167) + "f[" + this.getConfig().getString(p.getUniqueId().toString() + "-prefix", "") + Character.toString((char)167) + "f]";
-		String cage = "(" + this.getConfig().getString(p.getUniqueId() + "-nicinacage", "") + Character.toString((char)167) + "f)";
-		if(cage.equals("(" + Character.toString((char)167) + "f)")){
+		String pref = Character.toString((char)167) + "f" + this.getConfig().getString(p.getUniqueId().toString() + "-prefix", "") + Character.toString((char)167) + "f";
+		String cage = this.getConfig().getString(p.getUniqueId() + "-nicinacage", "") + Character.toString((char)167) + "f";
+		if(cage.equals(Character.toString((char)167) + "f")){
 			cage = p.getPlayerListName();
 		}
 		String suff = this.getConfig().getString(p.getUniqueId().toString() + "-suffix", "") + Character.toString((char)167) + "f";
