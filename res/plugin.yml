@@ -1,8 +1,9 @@
 name: LeNuXruti
-version: Close Back Unrounded Vowel
+version: Close Back Rounded Vowel
 author: Nomble
 main: nomble.java.LeNuXruti.Main
 description: The Return
+softdepend: [Vault]
 commands:
   nick:
     description: Set your nickname.

@@ -5,6 +5,7 @@
 			<ibiblio name="central" m2compatible="true"/>
 			<ibiblio name="spigot-repo" m2compatible="true" root="https://hub.spigotmc.org/nexus/content/repositories/snapshots/"/>
 			<ibiblio name="md-5" m2compatible="true" root="https://oss.sonatype.org/content/repositories/snapshots/"/>
+			<ibiblio name="vault-repo" m2compatible="true" root="http://nexus.hc.to/content/repositories/pub_releases"/>
 		</chain>
 	</resolvers>
 </ivysettings>

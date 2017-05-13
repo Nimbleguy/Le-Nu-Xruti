@@ -1,24 +1,42 @@
 package nomble.java.LeNuXruti;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import net.milkbowl.vault.chat.Chat;
+
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class Main extends JavaPlugin implements Listener{
+	private Nick nick = null;
+	private Saber saber = null;
 
 	@Override
 	public void onEnable(){
-		this.getCommand("prefix").setExecutor(this);
-		this.getCommand("nick").setExecutor(this);
-		this.getCommand("suffix").setExecutor(this);
-		this.getCommand("uprefix").setExecutor(this);
-		this.getCommand("unick").setExecutor(this);
-		this.getCommand("usuffix").setExecutor(this);
-		this.getServer().getPluginManager().registerEvents(this, this);
+		this.getConfig().addDefault("nick", false);
+		this.getConfig().addDefault("lightsaber", false);
+		this.getConfig().addDefault("sabers", new ArrayList<String>());
+		this.getConfig().options().copyDefaults(true);
+		this.saveConfig();
+
+		if(this.getConfig().getBoolean("nick", false)){
+			nick = getNick();
+		}
+		if(this.getConfig().getBoolean("lightsaber", false)){
+			saber = getSaber();
+		}
 	}
 
 	@Override
@@ -26,122 +44,63 @@ public class Main extends JavaPlugin implements Listener{
 		this.saveConfig();
 	}
 
-	@EventHandler
-	public void onPlayerChat(AsyncPlayerChatEvent event){
-		event.setFormat(getNick(event.getPlayer()) + ": %2$s");
+	public static ItemStack unbreak(ItemStack s, String n){
+		ItemMeta im = s.getItemMeta();
+		if(n != null){
+			im.setDisplayName(n);
+		}
+		im.spigot().setUnbreakable(true);
+		s.setItemMeta(im);
+		return s;
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-		if(label.startsWith("u") && args.length > 1){
-			StringBuilder s = new StringBuilder();
-			s.append(args[1]);
-			for(int i = 2; i < args.length; i++){
-				s.append(" ");
-				s.append(args[i]);
-			}
-			String str = s.toString();
-			str = str.replaceAll("[&\\$](?=[\\dabcdefABCDEF])", Character.toString((char)167));
-			Player p = this.getServer().getPlayerExact(args[0]);
-			if(label.equalsIgnoreCase("uprefix")){
-                                this.getConfig().set(p.getUniqueId().toString() + "-prefix", str);
-				p.sendMessage("Prefix set to " + str + Character.toString((char)167) + "f.");
-			}
-			else if(label.equalsIgnoreCase("unick")){
-                                this.getConfig().set(p.getUniqueId() + "-nicinacage", str);
-				p.sendMessage("Nickname set to " + str + Character.toString((char)167) + "f.");
-			}
-			else if(label.equalsIgnoreCase("usuffix")){
-                                this.getConfig().set(p.getUniqueId() + "-suffix", str);
-				p.sendMessage("Suffix set to " + str + Character.toString((char)167) + "f.");
-			}
-			else{
-				return false;
-			}
-			this.saveConfig();
-		}
-		else if(sender instanceof Player && args.length > 0){
-			StringBuilder s = new StringBuilder();
-			s.append(args[0]);
-			for(int i = 1; i < args.length; i++){
-				s.append(" ");
-				s.append(args[i]);
-			}
-			String str = s.toString();
-			str = str.replaceAll("[&\\$](?=[\\dabcdefABCDEF])", Character.toString((char)167));
-			Player p = (Player)sender;
-			if(label.equalsIgnoreCase("prefix")){
-				this.getConfig().set(p.getUniqueId().toString() + "-prefix", str);
-				p.sendMessage("Prefix set to " + str + Character.toString((char)167) + "f.");
-			}
-			else if(label.equalsIgnoreCase("nick")){
-				this.getConfig().set(p.getUniqueId() + "-nicinacage", str);
-				p.sendMessage("Nickname set to " + str + Character.toString((char)167) + "f.");
-			}
-			else if(label.equalsIgnoreCase("suffix")){
-				this.getConfig().set(p.getUniqueId() + "-suffix", str);
-				p.sendMessage("Suffix set to " + str + Character.toString((char)167) + "f.");
-			}
-			else{
-				return false;
-			}
-			this.saveConfig();
-		}
-		else if(label.startsWith("u") && args.length > 0){
-			Player p = this.getServer().getPlayerExact(args[0]);
-			if(label.equalsIgnoreCase("uprefix")){
-                                this.getConfig().set(p.getUniqueId().toString() + "-prefix", "");
-				p.sendMessage("Prefix reset.");
-			}
-			else if(label.equalsIgnoreCase("unick")){
-                                this.getConfig().set(p.getUniqueId() + "-nicinacage", "");
-				p.sendMessage("Nickname reset.");
-			}
-			else if(label.equalsIgnoreCase("usuffix")){
-                                this.getConfig().set(p.getUniqueId() + "-suffix", "");
-				p.sendMessage("Suffix reset.");
-			}
-			else{
-				return false;
-			}
-			this.saveConfig();
-		}
-		else if(sender instanceof Player){
-			Player p = (Player)sender;
-			if(label.equalsIgnoreCase("prefix")){
-				this.getConfig().set(p.getUniqueId().toString() + "-prefix", "");
-				p.sendMessage("Prefix reset.");
-			}
-			else if(label.equalsIgnoreCase("nick")){
-				this.getConfig().set(p.getUniqueId() + "-nicinacage", "");
-				p.sendMessage("Nickname reset.");
-			}
-			else if(label.equalsIgnoreCase("suffix")){
-				this.getConfig().set(p.getUniqueId() + "-suffix", "");
-				p.sendMessage("Suffix reset.");
-			}
-			else{
-				return false;
-			}
-			this.saveConfig();
-		}
-		else{
+	public static boolean same(ItemStack sa, ItemStack sb){
+		if(sa == null || sb == null){
 			return false;
 		}
-		return true;
+		return sa.getType() == sb.getType() && sa.getDurability() == sb.getDurability();
 	}
 
-	private String getNoNull(String v, String def){
-		return v == null ? def : v;
-	}
-
-	private String getNick(Player p){
-		String pref = Character.toString((char)167) + "f" + this.getConfig().getString(p.getUniqueId().toString() + "-prefix", "") + Character.toString((char)167) + "f";
-		String cage = this.getConfig().getString(p.getUniqueId() + "-nicinacage", "") + Character.toString((char)167) + "f";
-		if(cage.equals(Character.toString((char)167) + "f")){
-			cage = p.getPlayerListName();
+	private Nick getNick(){
+		Chat c;
+		try{
+			RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
+			c = rsp.getProvider();
 		}
-		String suff = this.getConfig().getString(p.getUniqueId().toString() + "-suffix", "") + Character.toString((char)167) + "f";
-		return (pref + " " + cage + " " + suff).trim();
+		catch(NoClassDefFoundError e){
+			c = null;// Nothing to see here, folks.
+		}
+		Nick n = new Nick(this, c);
+		this.getCommand("prefix").setExecutor(n);
+		this.getCommand("nick").setExecutor(n);
+		this.getCommand("suffix").setExecutor(n);
+		this.getCommand("uprefix").setExecutor(n);
+		this.getCommand("unick").setExecutor(n);
+		this.getCommand("usuffix").setExecutor(n);
+		this.getServer().getPluginManager().registerEvents(n, this);
+		return n;
+	}
+
+	private Saber getSaber(){
+		List<SaberPart> l = new ArrayList<SaberPart>();
+
+		for(String s : this.getConfig().getStringList("sabers")){
+			ItemStack g = unbreak(new ItemStack(Material.getMaterial(this.getConfig().getString(s + "-guiname")), 1, (short)this.getConfig().getInt(s + "-guidata")), null);
+			ItemStack r = unbreak(new ItemStack(Material.getMaterial(this.getConfig().getString(s + "-resname")), 1, (short)this.getConfig().getInt(s + "-resdata")), null);
+
+			LinkedHashMap<Integer, ItemStack> h = new LinkedHashMap<Integer, ItemStack>();
+			List<String> ln = this.getConfig().getStringList(s + "-name");
+			List<Short> ld = this.getConfig().getShortList(s + "-data");
+			List<Integer> ls = this.getConfig().getIntegerList(s + "-slot");
+			for(int i = 0; i < ln.size(); i++){
+				h.put(ls.get(i), unbreak(new ItemStack(Material.getMaterial(ln.get(i)), 1, ld.get(i)), null));
+			}
+
+			l.add(new SaberPart(g, h, r));
+		}
+
+		Saber s = new Saber(this, l);
+		this.getServer().getPluginManager().registerEvents(s, this);
+		return s;
 	}
 }
